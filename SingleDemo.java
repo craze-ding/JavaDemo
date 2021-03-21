@@ -1,4 +1,4 @@
-class Single1{
+class Single1{//饿汉式
 	private int num;
 	private static Single1 s=new Single1();//自己创建一个唯一的类,类一加载，对象就已经存在
 	private Single1(){//私有初始化函数
@@ -15,15 +15,21 @@ class Single1{
 	 }
 		
 }
-class Single2{
+class Single2{//懒汉式存在线程安全问题(面试时考!!!)
 	private static Single2 s=null;//类加载，没有对象。只有调用了GetInstance()才有对象.所以叫延迟加载形式
 	private int num;
 	private Single2(){
 
 	}
 	public static Single2 GetInstance(){
-		if(s==null)
-			s=new Single2();
+		if(s==null){//解决效率
+			//-->1
+			synchronized(Single2.class){//同步代码块,解决安全
+				if(s==null)
+				//-->0 -->1
+				s=new Single2();
+			}	
+		}			
 		return s;
 	}
 	public void setNum(int num){//也是通过私有化成员变量，控制返回值 
